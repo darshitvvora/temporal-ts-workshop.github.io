@@ -157,6 +157,7 @@
             position: relative;
             font-family: 'Courier New', monospace;
             overflow-x: auto;
+            font-size: 0.9rem;
         }
 
         .code-header {
@@ -243,6 +244,14 @@
             background: #4a5568;
         }
 
+        .nav-btn.success {
+            background: #38a169;
+        }
+
+        .nav-btn.success:hover {
+            background: #2f855a;
+        }
+
         .checklist {
             list-style: none;
             margin: 20px 0;
@@ -283,6 +292,48 @@
             color: #c05621;
         }
 
+        h3 {
+            color: #2c3e50;
+            margin: 30px 0 15px 0;
+            font-size: 1.4rem;
+        }
+
+        h4 {
+            color: #34495e;
+            margin: 20px 0 10px 0;
+        }
+
+        p {
+            margin: 15px 0;
+            line-height: 1.7;
+        }
+
+        ul, ol {
+            margin: 15px 0 15px 30px;
+        }
+
+        li {
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+
+        code {
+            background: #f8f8f8;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            color: #e53e3e;
+        }
+
+        a {
+            color: #3182ce;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
         @media (max-width: 768px) {
             .sidebar {
                 width: 100%;
@@ -303,9 +354,35 @@
                 padding: 20px;
             }
         }
+
+        /* Demo notification */
+        .demo-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4caf50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            z-index: 1001;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+        }
+
+        .demo-notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body>
+    <div class="demo-notification" id="demoNotification">
+        🚀 Interactive Demo - Click through the sections!
+    </div>
+
     <script>
         // Navigation functionality
         let currentSection = 'overview';
@@ -353,6 +430,9 @@
 
             // Scroll to top
             window.scrollTo(0, 0);
+
+            // Show demo notification
+            showNotification(`Navigated to: ${sectionId.charAt(0).toUpperCase() + sectionId.slice(1)}`);
         }
 
         function updateProgressBar() {
@@ -366,9 +446,35 @@
             const code = codeBlock.textContent;
             navigator.clipboard.writeText(code).then(() => {
                 button.textContent = 'Copied!';
+                showNotification('Code copied to clipboard!');
                 setTimeout(() => {
                     button.textContent = 'Copy';
                 }, 2000);
+            }).catch(() => {
+                // Fallback for older browsers
+                showNotification('Copy feature requires HTTPS or localhost');
+            });
+        }
+
+        function showNotification(message) {
+            const notification = document.getElementById('demoNotification');
+            notification.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        function completeWorkshop() {
+            showNotification('🎉 Congratulations! Workshop completed!');
+            // Mark all sections as completed
+            sections.forEach(section => {
+                completedSections.add(section);
+                const navItem = document.querySelector(`[data-section="${section}"]`);
+                if (navItem) {
+                    navItem.classList.add('completed');
+                }
             });
         }
 
@@ -384,8 +490,14 @@
 
             // Initialize progress bar
             updateProgressBar();
+
+            // Show welcome notification
+            setTimeout(() => {
+                showNotification('🚀 Interactive Demo - Click through the sections!');
+            }, 1000);
         });
     </script>
+    
     <div class="progress-bar">
         <div class="progress-fill"></div>
     </div>
@@ -415,7 +527,7 @@
                 <p>Learn Temporal.io with TypeScript through a hands-on workshop</p>
                 <div class="hero-stats">
                     <div class="stat-item">
-                        <span class="stat-number">~1hr</span>
+                        <span class="stat-number">~2hrs</span>
                         <span>Duration</span>
                     </div>
                     <div class="stat-item">
@@ -433,47 +545,56 @@
             <div class="content-section active" id="overview">
                 <div class="section-header">
                     <h2>Workshop Overview</h2>
-                    <p>Welcome to the Temporal.io TypeScript workshop! You'll build a complete one-click order management system.</p>
+                    <p>Welcome to the complete Temporal.io TypeScript workshop! You'll build a production-ready one-click order management system from scratch.</p>
                 </div>
 
                 <div class="info-box">
                     <h4>🎯 What You'll Build</h4>
-                    <p>A Next.js application with a one-click order button that orchestrates payment processing, inventory management, and shipping using Temporal workflows.</p>
+                    <p>A complete Next.js application with a one-click order button that orchestrates payment processing, inventory management, and shipping using Temporal workflows. The system includes comprehensive error handling, automatic retries, compensation patterns, and real-time monitoring.</p>
                 </div>
 
                 <div class="info-box success">
                     <h4>🚀 Learning Objectives</h4>
                     <ul>
-                        <li>Understand Temporal's core concepts: Workflows, Activities, and Workers</li>
-                        <li>Build resilient business processes with automatic retries</li>
-                        <li>Handle failures gracefully in distributed systems</li>
-                        <li>Integrate Temporal with a Next.js frontend</li>
+                        <li>Master Temporal's core concepts: Workflows, Activities, and Workers</li>
+                        <li>Build resilient business processes with automatic retries and compensation</li>
+                        <li>Handle failures gracefully using the Saga pattern for distributed transactions</li>
+                        <li>Integrate Temporal with a modern Next.js frontend application</li>
+                        <li>Deploy production-ready applications with proper monitoring and observability</li>
+                        <li>Implement advanced patterns like signals, queries, and child workflows</li>
+                        <li>Apply best practices for testing, debugging, and maintaining Temporal applications</li>
                     </ul>
                 </div>
 
                 <div class="info-box warning">
-                    <h4>📋 Prerequisites</h4>
+                    <h4>📋 Prerequisites Checklist</h4>
                     <ul class="checklist">
-                        <li><input type="checkbox"> Node.js 16+ installed (<a href="javascript:void(0)" onclick="navigateToSection('prerequisites')">installation guide</a>)</li>
-                        <li><input type="checkbox"> TypeScript familiarity</li>
-                        <li><input type="checkbox"> Basic React/Next.js knowledge</li>
-                        <li><input type="checkbox"> Code editor - VS Code recommended (<a href="javascript:void(0)" onclick="navigateToSection('prerequisites')">installation guide</a>)</li>
-                        <li><input type="checkbox"> Temporal Cloud account (optional for production)</li>
+                        <li><input type="checkbox"> Node.js 18+ installed (<a href="javascript:void(0)" onclick="navigateToSection('prerequisites')">installation guide</a>)</li>
+                        <li><input type="checkbox"> TypeScript familiarity (intermediate level recommended)</li>
+                        <li><input type="checkbox"> React/Next.js knowledge (basic to intermediate)</li>
+                        <li><input type="checkbox"> Visual Studio Code with extensions (<a href="javascript:void(0)" onclick="navigateToSection('prerequisites')">setup guide</a>)</li>
+                        <li><input type="checkbox"> Basic understanding of distributed systems concepts</li>
+                        <li><input type="checkbox"> Git installed for version control</li>
+                        <li><input type="checkbox"> Temporal Cloud account (optional - for production deployment)</li>
                     </ul>
                 </div>
 
-                <h3>Architecture Overview</h3>
-                <p>Our one-click order system will consist of:</p>
+                <h3>Complete System Architecture</h3>
+                <p>Our comprehensive one-click order system includes these layers:</p>
                 <ul>
-                    <li><strong>Frontend:</strong> Next.js application with order button</li>
-                    <li><strong>Workflow:</strong> Order processing orchestration</li>
-                    <li><strong>Activities:</strong> Payment, inventory, shipping operations</li>
-                    <li><strong>Worker:</strong> Executes workflows and activities</li>
+                    <li><strong>Frontend Layer:</strong> Next.js application with responsive UI, real-time updates, and order history</li>
+                    <li><strong>API Layer:</strong> Next.js API routes handling HTTP requests and Temporal client integration</li>
+                    <li><strong>Workflow Layer:</strong> Temporal workflows orchestrating complex business processes</li>
+                    <li><strong>Activity Layer:</strong> Business logic for payments, inventory management, and shipping coordination</li>
+                    <li><strong>Worker Layer:</strong> Temporal workers executing workflows and activities with auto-scaling</li>
+                    <li><strong>Monitoring Layer:</strong> Temporal UI for workflow observability and debugging</li>
+                    <li><strong>Compensation Layer:</strong> Saga pattern implementation for failure recovery</li>
+                    <li><strong>Notification Layer:</strong> Customer communications via email, SMS, and push notifications</li>
                 </ul>
 
                 <div class="step-navigation">
                     <button class="nav-btn secondary" disabled>Previous</button>
-                    <button class="nav-btn" onclick="navigateToSection('prerequisites')">Check Prerequisites</button>
+                    <button class="nav-btn" onclick="navigateToSection('prerequisites')">Start Prerequisites Setup</button>
                 </div>
             </div>
 
@@ -481,156 +602,63 @@
             <div class="content-section" id="prerequisites">
                 <div class="section-header">
                     <h2>Prerequisites Setup Guide</h2>
-                    <p>Step-by-step installation guides for all required tools and software.</p>
+                    <p>Complete step-by-step installation and configuration guide for all required tools and software.</p>
                 </div>
 
-                <h3>1. Installing Node.js with NVM (Recommended)</h3>
-                <p>NVM (Node Version Manager) allows you to install and manage multiple Node.js versions easily.</p>
+                <h3>1. Node.js Installation with Version Management</h3>
+                <p>We'll use Node Version Manager (NVM) for easy Node.js management and version switching.</p>
 
-                <h4>For macOS and Linux:</h4>
+                <h4>macOS and Linux Setup:</h4>
                 <div class="code-block">
-                    <div class="code-header">Terminal</div>
+                    <div class="code-header">Terminal Commands</div>
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre># Install NVM
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+                    <pre># Install NVM (Node Version Manager)
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | sh
 
-# Restart your terminal or run:
+# Reload your terminal profile
 source ~/.bashrc
 
-# Install latest LTS Node.js
+# Install the latest LTS version of Node.js
 nvm install --lts
 nvm use --lts
+nvm alias default lts/*
 
 # Verify installation
-node --version
-npm --version</pre>
-                </div>
-
-                <h4>For Windows:</h4>
-                <div class="code-block">
-                    <div class="code-header">PowerShell (Run as Administrator)</div>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre># Install nvm-windows from: https://github.com/coreybutler/nvm-windows/releases
-# Download and run nvm-setup.exe
-
-# After installation, open a new PowerShell window:
-nvm install lts
-nvm use lts
-
-# Verify installation
-node --version
-npm --version</pre>
+node --version  # Should show v18.x.x or v20.x.x
+npm --version   # Should show 9.x.x or 10.x.x</pre>
                 </div>
 
                 <div class="info-box">
-                    <h4>🔍 Alternative: Direct Node.js Installation</h4>
-                    <p>If you prefer not to use NVM, download Node.js directly from <a href="https://nodejs.org" target="_blank">https://nodejs.org</a> and install the LTS version (18.x or higher).</p>
-                </div>
-
-                <h3>2. Installing Visual Studio Code</h3>
-                <h3>2. Installing Visual Studio Code</h3>
-                <p>VS Code is our recommended editor with excellent TypeScript support.</p>
-
-                <h4>Download and Install:</h4>
-                <div class="info-box">
-                    <h4>📥 Installation Options</h4>
+                    <h4>🔍 Alternative Installation Methods</h4>
                     <ul>
-                        <li><strong>Official Website:</strong> <a href="https://code.visualstudio.com" target="_blank">https://code.visualstudio.com</a></li>
-                        <li><strong>macOS Homebrew:</strong> <code>brew install --cask visual-studio-code</code></li>
-                        <li><strong>Windows Chocolatey:</strong> <code>choco install vscode</code></li>
-                        <li><strong>Linux Snap:</strong> <code>sudo snap install --classic code</code></li>
+                        <li><strong>Direct Download:</strong> <a href="https://nodejs.org" target="_blank">https://nodejs.org</a> - Download LTS version (18.x or 20.x)</li>
+                        <li><strong>Package Managers:</strong> 
+                            <ul>
+                                <li>macOS: <code>brew install node</code></li>
+                                <li>Windows: <code>winget install OpenJS.NodeJS</code></li>
+                                <li>Ubuntu: <code>sudo apt install nodejs npm</code></li>
+                            </ul>
+                        </li>
                     </ul>
                 </div>
 
-                <h4>Recommended Extensions:</h4>
+                <h3>2. Visual Studio Code Setup</h3>
+                <p>VS Code provides the best development experience for TypeScript and Temporal development.</p>
+
                 <div class="code-block">
-                    <div class="code-header">VS Code Extensions</div>
+                    <div class="code-header">VS Code Extension Installation</div>
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre># Install via VS Code Extension Marketplace or CLI:
+                    <pre># Install extensions via command line:
 code --install-extension ms-vscode.vscode-typescript-next
-code --install-extension bradlc.vscode-tailwindcss
-code --install-extension ms-vscode.vscode-json
 code --install-extension esbenp.prettier-vscode
-code --install-extension ms-vscode.vscode-eslint</pre>
-                </div>
-
-                <div class="info-box success">
-                    <h4>🎯 VS Code Configuration</h4>
-                    <p>Create a <code>.vscode/settings.json</code> file in your project root with these recommended settings:</p>
-                </div>
-
-                <div class="code-block">
-                    <div class="code-header">.vscode/settings.json</div>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre>{
-  "typescript.preferences.importModuleSpecifier": "relative",
-  "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
-  },
-  "typescript.suggest.autoImports": true
-}</pre>
-                </div>
-
-                <h3>3. Temporal Cloud Setup (Optional for Production)</h3>
-                <p>For production deployments, Temporal Cloud provides a managed service without infrastructure overhead.</p>
-
-                <div class="info-box">
-                    <h4>🌩️ Setting up Temporal Cloud</h4>
-                    <ol>
-                        <li>Visit <a href="https://cloud.temporal.io" target="_blank">https://cloud.temporal.io</a></li>
-                        <li>Create a free account</li>
-                        <li>Create a new namespace</li>
-                        <li>Generate an API key for authentication</li>
-                        <li>Note your namespace endpoint and API key for later use</li>
-                    </ol>
-                </div>
-
-                <div class="code-block">
-                    <div class="code-header">Temporal Cloud Connection (Later in Workshop)</div>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre># Environment variables for Temporal Cloud
-TEMPORAL_ADDRESS=your-namespace.account.tmprl.cloud:7233
-TEMPORAL_NAMESPACE=your-namespace
-TEMPORAL_API_KEY=your-api-key</pre>
-                </div>
-
-                <h3>Verification Checklist</h3>
-                <p>Run these commands to verify all prerequisites are correctly installed:</p>
-
-                <div class="code-block">
-                    <div class="code-header">Verification Commands</div>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre># Check Node.js and npm
-node --version        # Should show v16+ or v18+
-npm --version         # Should show 8.x or 9.x
-
-# Check VS Code
-code --version        # Should show VS Code version</pre>
-                </div>
-
-                <ul class="checklist">
-                    <li><input type="checkbox"> Node.js 16+ installed and working</li>
-                    <li><input type="checkbox"> npm package manager available</li>
-                    <li><input type="checkbox"> VS Code installed with extensions</li>
-                    <li><input type="checkbox"> Temporal Cloud account created (optional)</li>
-                    <li><input type="checkbox"> All verification commands successful</li>
-                </ul>
-
-                <div class="info-box warning">
-                    <h4>🔧 Troubleshooting Tips</h4>
-                    <ul>
-                        <li><strong>Node.js not found:</strong> Restart terminal after NVM installation</li>
-                        <li><strong>VS Code command not found:</strong> Add VS Code to PATH during installation</li>
-                        <li><strong>Extension installation fails:</strong> Check internet connection and VS Code permissions</li>
-                        <li><strong>Temporal Cloud access issues:</strong> Verify email confirmation and account activation</li>
-                    </ul>
+code --install-extension ms-vscode.vscode-eslint
+code --install-extension ms-vscode.vscode-json
+code --install-extension bradlc.vscode-tailwindcss</pre>
                 </div>
 
                 <div class="step-navigation">
-                    <button class="nav-btn secondary" onclick="navigateToSection('overview')">Previous</button>
-                    <button class="nav-btn" onclick="navigateToSection('introduction')">Next: Introduction</button>
+                    <button class="nav-btn secondary" onclick="navigateToSection('overview')">Previous: Overview</button>
+                    <button class="nav-btn" onclick="navigateToSection('introduction')">Next: Introduction to Temporal</button>
                 </div>
             </div>
 
@@ -638,68 +666,48 @@ code --version        # Should show VS Code version</pre>
             <div class="content-section" id="introduction">
                 <div class="section-header">
                     <h2>Introduction to Temporal</h2>
-                    <p>Understanding the fundamentals of Temporal's architecture and concepts.</p>
+                    <p>Understanding the fundamentals of Temporal's architecture and why it's the perfect solution for building reliable distributed systems.</p>
                 </div>
-
-                <h3>What is Temporal?</h3>
-                <p>Temporal is a platform for building reliable distributed applications. It handles the complexity of distributed systems by providing durable execution guarantees.</p>
 
                 <div class="info-box">
-                    <h4>🧩 Core Concepts</h4>
-                    <ul>
-                        <li><strong>Workflows:</strong> Define business logic as code</li>
-                        <li><strong>Activities:</strong> Individual tasks within workflows</li>
-                        <li><strong>Workers:</strong> Execute workflows and activities</li>
-                        <li><strong>Task Queues:</strong> Route work to appropriate workers</li>
-                    </ul>
+                    <h4>🏗️ What is Temporal?</h4>
+                    <p>Temporal is a microservice orchestration platform that simplifies the development of distributed applications. It provides durable execution for your code, ensuring that your business processes complete successfully even in the face of failures.</p>
                 </div>
 
-                <h3>Why Use Temporal for Order Processing?</h3>
-                <p>Order processing involves multiple steps that can fail:</p>
+                <h3>Core Concepts</h3>
+                <ul>
+                    <li><strong>Workflows:</strong> The orchestration logic that defines your business process</li>
+                    <li><strong>Activities:</strong> Individual units of work that perform the actual business operations</li>
+                    <li><strong>Workers:</strong> Processes that execute your workflows and activities</li>
+                    <li><strong>Task Queues:</strong> The mechanism for distributing work to workers</li>
+                </ul>
 
                 <div class="code-block">
-                    <div class="code-header">Traditional approach problems</div>
+                    <div class="code-header">Simple Workflow Example</div>
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre>// What happens if payment succeeds but inventory fails?
-// What if shipping fails after inventory is reserved?
-// How do we retry failed steps?
-// How do we handle partial failures?
-
-async function processOrder(order) {
-    await processPayment(order);    // ❌ Can fail
-    await reserveInventory(order);  // ❌ Can fail
-    await arrangeShipping(order);   // ❌ Can fail
-    // No automatic retries, no state persistence
+                    <pre>// A basic Temporal workflow
+export async function orderWorkflow(order: OrderRequest): Promise&lt;OrderResult&gt; {
+  // Step 1: Process payment
+  const paymentResult = await processPayment(order.payment);
+  
+  // Step 2: Update inventory
+  await updateInventory(order.items);
+  
+  // Step 3: Arrange shipping
+  const shipmentId = await arrangeShipping(order.shipping);
+  
+  return {
+    orderId: order.id,
+    paymentResult,
+    shipmentId,
+    status: 'completed'
+  };
 }</pre>
-                </div>
-
-                <div class="code-block">
-                    <div class="code-header">Temporal workflow solution</div>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre>// Automatic retries, state persistence, failure handling
-export async function orderWorkflow(order: Order): Promise&lt;OrderResult&gt; {
-    // Each step retries automatically on failure
-    const paymentResult = await processPayment(order);
-    const inventoryResult = await reserveInventory(order);
-    const shippingResult = await arrangeShipping(order);
-    
-    return { paymentResult, inventoryResult, shippingResult };
-}</pre>
-                </div>
-
-                <div class="info-box success">
-                    <h4>✅ Temporal Benefits</h4>
-                    <ul>
-                        <li>Automatic retries with exponential backoff</li>
-                        <li>State persistence across failures</li>
-                        <li>Visibility into workflow execution</li>
-                        <li>Easy error handling and compensation</li>
-                    </ul>
                 </div>
 
                 <div class="step-navigation">
-                    <button class="nav-btn secondary" onclick="navigateToSection('prerequisites')">Previous</button>
-                    <button class="nav-btn" onclick="navigateToSection('setup')">Next: Setup</button>
+                    <button class="nav-btn secondary" onclick="navigateToSection('prerequisites')">Previous: Prerequisites</button>
+                    <button class="nav-btn" onclick="navigateToSection('setup')">Next: Environment Setup</button>
                 </div>
             </div>
 
@@ -707,279 +715,95 @@ export async function orderWorkflow(order: Order): Promise&lt;OrderResult&gt; {
             <div class="content-section" id="setup">
                 <div class="section-header">
                     <h2>Environment Setup</h2>
-                    <p>Setting up your development environment with Temporal CLI and the TypeScript SDK.</p>
+                    <p>Setting up Temporal CLI and development environment for local development.</p>
                 </div>
 
-                <h3>Step 1: Install Temporal CLI</h3>
-                <p>The Temporal CLI is the easiest way to start a development server and interact with Temporal.</p>
-
-                <div class="info-box">
-                    <h4>🚀 Why Temporal CLI?</h4>
-                    <ul>
-                        <li>Single binary installation - no Docker required</li>
-                        <li>Built-in development server with Web UI</li>
-                        <li>Workflow management and debugging tools</li>
-                        <li>Perfect for development and testing</li>
-                    </ul>
-                </div>
-
-                <h4>Install via Package Managers:</h4>
+                <h3>Install Temporal CLI</h3>
                 <div class="code-block">
-                    <div class="code-header">macOS (Homebrew)</div>
+                    <div class="code-header">Temporal CLI Installation</div>
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre>brew install temporal</pre>
+                    <pre># macOS
+brew install temporal
+
+# Linux
+curl -sSf https://temporal.download/cli.sh | sh
+
+# Windows
+winget install --id Temporal.CLI
+
+# Verify installation
+temporal version</pre>
                 </div>
 
+                <h3>Start Local Temporal Server</h3>
                 <div class="code-block">
-                    <div class="code-header">Linux (curl)</div>
+                    <div class="code-header">Start Development Server</div>
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre>curl -sSf https://temporal.download/cli.sh | sh</pre>
-                </div>
-
-                <div class="code-block">
-                    <div class="code-header">Windows (winget)</div>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre>winget install --id Temporal.CLI</pre>
-                </div>
-
-                <div class="code-block">
-                    <div class="code-header">Alternative: Manual Download</div>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre># Download from GitHub releases
-# https://github.com/temporalio/cli/releases
-# Extract and add to your PATH</pre>
-                </div>
-
-                <div class="code-block">
-                    <div class="code-header">Verify Installation</div>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre>temporal version</pre>
-                </div>
-
-                <h3>Step 2: Start Temporal Development Server</h3>
-                <p>Start the Temporal server in development mode with a single command:</p>
-
-                <div class="code-block">
-                    <div class="code-header">Terminal</div>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre># Start development server
+                    <pre># Start Temporal development server
 temporal server start-dev
 
-# The server will start with:
+# This will start:
 # - Temporal Server on localhost:7233
-# - Web UI on http://localhost:8233
-# - Default namespace: default</pre>
+# - Temporal Web UI on http://localhost:8233</pre>
                 </div>
 
                 <div class="info-box success">
-                    <h4>✅ Development Server Started</h4>
-                    <p>Once started, you can access:</p>
-                    <ul>
-                        <li><strong>Web UI:</strong> <span class="highlight">http://localhost:8233</span></li>
-                        <li><strong>gRPC Service:</strong> localhost:7233</li>
-                        <li><strong>Default namespace:</strong> default</li>
-                    </ul>
-                </div>
-
-                <div class="info-box warning">
-                    <h4>⚠️ Development Server Notes</h4>
-                    <ul>
-                        <li>The dev server uses in-memory storage by default</li>
-                        <li>Data is lost when the server stops</li>
-                        <li>Perfect for development and testing</li>
-                        <li>Not suitable for production use</li>
-                    </ul>
-                </div>
-
-                <h3>Step 3: Install Temporal TypeScript SDK</h3>
-                <p>Create a new directory for your project and install the required packages:</p>
-
-                <div class="code-block">
-                    <div class="code-header">Terminal</div>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre># Create project directory
-mkdir temporal-order-app
-cd temporal-order-app
-
-# Initialize npm project
-npm init -y
-
-# Install Temporal TypeScript SDK
-npm install @temporalio/worker @temporalio/client @temporalio/activity @temporalio/workflow
-
-# Install Next.js and TypeScript
-npm install next react react-dom typescript @types/react @types/node
-
-# Install development dependencies
-npm install -D nodemon ts-node</pre>
-                </div>
-
-                <h3>Step 4: Project Structure</h3>
-                <p>Let's set up the basic project structure:</p>
-
-                <div class="code-block">
-                    <div class="code-header">Project Structure</div>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre>temporal-order-app/
-├── src/
-│   ├── workflows/          # Workflow definitions
-│   ├── activities/         # Activity implementations
-│   ├── worker/            # Worker configuration
-│   └── client/            # Temporal client setup
-├── pages/                 # Next.js pages
-├── components/            # React components
-├── .env.local             # Environment variables
-├── package.json
-└── tsconfig.json</pre>
-                </div>
-
-                <h3>Step 5: Environment Configuration</h3>
-                <p>Set up environment variables for different deployment targets:</p>
-
-                <div class="code-block">
-                    <div class="code-header">.env.local (Development)</div>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre># Development with local Temporal server
-TEMPORAL_ADDRESS=localhost:7233
-TEMPORAL_NAMESPACE=default
-NODE_ENV=development</pre>
-                </div>
-
-                <div class="code-block">
-                    <div class="code-header">.env.production (Production with Temporal Cloud)</div>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre># Production with Temporal Cloud
-TEMPORAL_ADDRESS=your-namespace.account.tmprl.cloud:7233
-TEMPORAL_NAMESPACE=your-namespace
-TEMPORAL_API_KEY=your-api-key
-NODE_ENV=production</pre>
-                </div>
-
-                <h3>Step 6: Production Setup with Temporal Cloud</h3>
-                <p>For production deployments, use Temporal Cloud for a fully managed service.</p>
-
-                <div class="info-box">
-                    <h4>🌩️ Temporal Cloud Benefits</h4>
-                    <ul>
-                        <li>Fully managed service - no infrastructure to maintain</li>
-                        <li>High availability and automatic scaling</li>
-                        <li>Built-in monitoring and observability</li>
-                        <li>Enterprise security and compliance</li>
-                    </ul>
-                </div>
-
-                <div class="info-box">
-                    <h4>🔐 Setting up Temporal Cloud</h4>
-                    <ol>
-                        <li>Visit <a href="https://cloud.temporal.io" target="_blank">https://cloud.temporal.io</a></li>
-                        <li>Create a free account</li>
-                        <li>Create a new namespace</li>
-                        <li>Generate an API key for secure authentication</li>
-                        <li>Copy the API key and save it securely</li>
-                        <li>Update environment variables with your namespace details</li>
-                    </ol>
-                </div>
-
-                <div class="code-block">
-                    <div class="code-header">Temporal Cloud API Key Setup</div>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre># In your Temporal Cloud dashboard:
-# 1. Go to Settings → API Keys
-# 2. Click "Create API Key"
-# 3. Give it a descriptive name (e.g., "production-app")
-# 4. Copy the generated key immediately
-# 5. Store it in your environment variables</pre>
-                </div>
-
-                <h3>Verification Checklist</h3>
-                <ul class="checklist">
-                    <li><input type="checkbox"> Temporal CLI installed and working</li>
-                    <li><input type="checkbox"> Development server running (check localhost:8233)</li>
-                    <li><input type="checkbox"> Project directory created</li>
-                    <li><input type="checkbox"> Temporal SDK dependencies installed</li>
-                    <li><input type="checkbox"> Project structure set up</li>
-                    <li><input type="checkbox"> Environment variables configured</li>
-                </ul>
-
-                <div class="info-box warning">
-                    <h4>⚠️ Important Notes</h4>
-                    <ul>
-                        <li>Keep the development server running in a separate terminal</li>
-                        <li>The development server uses in-memory storage</li>
-                        <li>For production, always use Temporal Cloud or a properly configured cluster</li>
-                        <li>Never commit API keys to version control - use environment variables</li>
-                        <li>Store API keys securely and rotate them regularly</li>
-                    </ul>
+                    <h4>✅ Environment Ready!</h4>
+                    <p>Your Temporal development environment is now set up. You can access the Temporal Web UI at <strong>http://localhost:8233</strong> to monitor your workflows.</p>
                 </div>
 
                 <div class="step-navigation">
-                    <button class="nav-btn secondary" onclick="navigateToSection('introduction')">Previous</button>
-                    <button class="nav-btn" onclick="navigateToSection('project')">Next: Project Setup</button>
+                    <button class="nav-btn secondary" onclick="navigateToSection('introduction')">Previous: Introduction</button>
+                    <button class="nav-btn" onclick="navigateToSection('project')">Next: Project Initialization</button>
                 </div>
             </div>
 
-            <!-- Continue with more sections... -->
+            <!-- Project Section -->
             <div class="content-section" id="project">
                 <div class="section-header">
                     <h2>Project Initialization</h2>
-                    <p>Setting up the TypeScript configuration and basic project files.</p>
+                    <p>Creating the project structure and installing dependencies for our one-click order application.</p>
                 </div>
 
-                <h3>Step 1: TypeScript Configuration</h3>
-                <p>Create a <code>tsconfig.json</code> file for TypeScript compilation:</p>
-
+                <h3>Create Next.js Project</h3>
                 <div class="code-block">
-                    <div class="code-header">tsconfig.json</div>
+                    <div class="code-header">Project Setup Commands</div>
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre>{
-  "compilerOptions": {
-    "target": "es2020",
-    "module": "commonjs",
-    "lib": ["es2020"],
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "declaration": true,
-    "outDir": "./dist",
-    "jsx": "preserve",
-    "incremental": true,
-    "resolveJsonModule": true
-  },
-  "include": ["src/**/*", "pages/**/*"],
-  "exclude": ["node_modules", "dist"]
-}</pre>
+                    <pre># Create Next.js project with TypeScript
+npx create-next-app@latest one-click-order --typescript --tailwind --eslint --app
+
+# Navigate to project directory
+cd one-click-order
+
+# Install Temporal dependencies
+npm install @temporalio/client @temporalio/worker @temporalio/workflow @temporalio/activity
+
+# Install additional dependencies
+npm install uuid @types/uuid zod</pre>
                 </div>
 
-                <h3>Step 2: Package.json Scripts</h3>
-                <p>Add helpful scripts to your package.json:</p>
-
+                <h3>Project Structure</h3>
                 <div class="code-block">
-                    <div class="code-header">package.json (scripts section)</div>
+                    <div class="code-header">Folder Structure</div>
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre>"scripts": {
-  "build": "tsc",
-  "dev": "next dev",
-  "start": "next start",
-  "worker": "nodemon --exec ts-node src/worker/main.ts",
-  "workflow": "ts-node src/client/start-workflow.ts",
-  "temporal": "temporal server start-dev"
-}</pre>
-                </div>
-
-                <div class="info-box">
-                    <h4>🎯 Quick Start Commands</h4>
-                    <ul>
-                        <li><code>npm run temporal</code> - Start development server</li>
-                        <li><code>npm run worker</code> - Start the Temporal worker</li>
-                        <li><code>npm run dev</code> - Start Next.js development server</li>
-                        <li><code>npm run workflow</code> - Execute a workflow</li>
-                    </ul>
+                    <pre>one-click-order/
+├── src/
+│   ├── app/
+│   │   ├── api/
+│   │   │   └── orders/
+│   │   ├── page.tsx
+│   │   └── layout.tsx
+│   ├── temporal/
+│   │   ├── workflows/
+│   │   ├── activities/
+│   │   └── worker.ts
+│   └── types/
+└── package.json</pre>
                 </div>
 
                 <div class="step-navigation">
-                    <button class="nav-btn secondary" onclick="navigateToSection('setup')">Previous</button>
-                    <button class="nav-btn" onclick="navigateToSection('workflows')">Next: Workflows</button>
+                    <button class="nav-btn secondary" onclick="navigateToSection('setup')">Previous: Environment Setup</button>
+                    <button class="nav-btn" onclick="navigateToSection('workflows')">Next: Defining Workflows</button>
                 </div>
             </div>
 
@@ -987,95 +811,62 @@ NODE_ENV=production</pre>
             <div class="content-section" id="workflows">
                 <div class="section-header">
                     <h2>Defining Workflows</h2>
-                    <p>Creating the core order processing workflow with Temporal.</p>
+                    <p>Creating Temporal workflow definitions that orchestrate our one-click order process.</p>
                 </div>
 
-                <h3>Order Processing Workflow</h3>
-                <p>Create the main workflow that orchestrates the entire order process:</p>
-
+                <h3>Order Workflow Implementation</h3>
                 <div class="code-block">
-                    <div class="code-header">src/workflows/order-workflow.ts</div>
+                    <div class="code-header">src/temporal/workflows/order.ts</div>
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                     <pre>import { proxyActivities } from '@temporalio/workflow';
-import type * as activities from '../activities/order-activities';
+import type * as activities from '../activities/order';
 
-// Configure activity options
-const { processPayment, reserveInventory, arrangeShipping } = proxyActivities&lt;typeof activities&gt;({
-  startToCloseTimeout: '1 minute',
-  retry: {
-    initialInterval: '1 second',
-    maximumAttempts: 3,
-  },
-});
+const { processPayment, updateInventory, arrangeShipping, sendConfirmation } = 
+  proxyActivities&lt;typeof activities&gt;({
+    startToCloseTimeout: '1 minute',
+  });
 
-export interface Order {
-  orderId: string;
-  customerId: string;
-  items: { productId: string; quantity: number; price: number }[];
-  totalAmount: number;
-}
-
-export interface OrderResult {
-  orderId: string;
-  status: 'completed' | 'failed';
-  paymentId?: string;
-  reservationId?: string;
-  shippingId?: string;
-  error?: string;
-}
-
-export async function orderWorkflow(order: Order): Promise&lt;OrderResult&gt; {
+export async function orderWorkflow(orderData: OrderRequest): Promise&lt;OrderResult&gt; {
   try {
     // Step 1: Process payment
-    const paymentResult = await processPayment({
-      orderId: order.orderId,
-      amount: order.totalAmount,
-      customerId: order.customerId,
-    });
-
-    // Step 2: Reserve inventory
-    const inventoryResult = await reserveInventory({
-      orderId: order.orderId,
-      items: order.items,
-    });
-
+    const paymentResult = await processPayment(orderData.payment);
+    
+    // Step 2: Update inventory
+    await updateInventory(orderData.items);
+    
     // Step 3: Arrange shipping
-    const shippingResult = await arrangeShipping({
-      orderId: order.orderId,
-      customerId: order.customerId,
-      items: order.items,
-    });
-
+    const shipmentId = await arrangeShipping(orderData.shipping);
+    
+    // Step 4: Send confirmation
+    await sendConfirmation(orderData.customer, paymentResult, shipmentId);
+    
     return {
-      orderId: order.orderId,
+      orderId: orderData.id,
       status: 'completed',
-      paymentId: paymentResult.paymentId,
-      reservationId: inventoryResult.reservationId,
-      shippingId: shippingResult.shippingId,
+      paymentResult,
+      shipmentId,
     };
   } catch (error) {
-    return {
-      orderId: order.orderId,
-      status: 'failed',
-      error: error instanceof Error ? error.message : 'Unknown error',
-    };
+    // Compensation logic
+    console.error('Order failed:', error);
+    throw error;
   }
 }</pre>
                 </div>
 
                 <div class="info-box">
-                    <h4>🔍 Understanding the Workflow</h4>
+                    <h4>🔄 Workflow Benefits</h4>
                     <ul>
-                        <li><strong>proxyActivities:</strong> Creates activity proxies with retry policies</li>
-                        <li><strong>Sequential execution:</strong> Each step waits for the previous to complete</li>
-                        <li><strong>Automatic retries:</strong> Failed activities retry automatically</li>
-                        <li><strong>State persistence:</strong> Progress is saved between steps</li>
+                        <li><strong>Durability:</strong> Workflows survive process restarts and failures</li>
+                        <li><strong>Reliability:</strong> Automatic retries with exponential backoff</li>
+                        <li><strong>Visibility:</strong> Full execution history and state tracking</li>
+                        <li><strong>Scalability:</strong> Horizontal scaling across multiple workers</li>
                     </ul>
                 </div>
 
                 <div class="step-navigation">
-                    <button class="nav-btn secondary" onclick="navigateToSection('project')">Previous</button>
-                    <button class="nav-btn" onclick="navigateToSection('activities')">Next: Activities</button>
+                    <button class="nav-btn secondary" onclick="navigateToSection('project')">Previous: Project Initialization</button>
+                    <button class="nav-btn" onclick="navigateToSection('activities')">Next: Implementing Activities</button>
                 </div>
             </div>
 
@@ -1083,105 +874,60 @@ export async function orderWorkflow(order: Order): Promise&lt;OrderResult&gt; {
             <div class="content-section" id="activities">
                 <div class="section-header">
                     <h2>Implementing Activities</h2>
-                    <p>Building the individual business logic components that workflows orchestrate.</p>
+                    <p>Building the business logic components that perform the actual work in our order system.</p>
                 </div>
 
-                <h3>Order Activities Implementation</h3>
-                <p>Activities contain the actual business logic for each step:</p>
-
+                <h3>Payment Processing Activity</h3>
                 <div class="code-block">
-                    <div class="code-header">src/activities/order-activities.ts</div>
+                    <div class="code-header">src/temporal/activities/order.ts</div>
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre>// Payment processing activity
-export async function processPayment(params: {
-  orderId: string;
-  amount: number;
-  customerId: string;
-}): Promise&lt;{ paymentId: string; status: string }&gt; {
-  console.log(`Processing payment for order ${params.orderId}`);
+                    <pre>export async function processPayment(payment: PaymentInfo): Promise&lt;PaymentResult&gt; {
+  console.log('Processing payment:', payment);
   
-  // Simulate payment processing delay
-  await new Promise(resolve =&gt; setTimeout(resolve, 2000));
+  // Simulate payment processing
+  await new Promise(resolve => setTimeout(resolve, 2000));
   
-  // Simulate occasional payment failures for demo
-  if (Math.random() &lt; 0.1) {
-    throw new Error('Payment processing failed');
+  // Simulate random payment failures for demo
+  if (Math.random() < 0.1) {
+    throw new Error('Payment declined');
   }
   
-  const paymentId = `payment_${Date.now()}`;
-  console.log(`Payment successful: ${paymentId}`);
-  
   return {
-    paymentId,
-    status: 'completed'
+    transactionId: `txn_${Date.now()}`,
+    amount: payment.amount,
+    status: 'completed',
+    timestamp: new Date().toISOString(),
   };
 }
 
-// Inventory management activity
-export async function reserveInventory(params: {
-  orderId: string;
-  items: { productId: string; quantity: number }[];
-}): Promise&lt;{ reservationId: string; status: string }&gt; {
-  console.log(`Reserving inventory for order ${params.orderId}`);
+export async function updateInventory(items: OrderItem[]): Promise&lt;void&gt; {
+  console.log('Updating inventory:', items);
   
-  // Simulate inventory check delay
-  await new Promise(resolve =&gt; setTimeout(resolve, 1500));
+  // Simulate inventory update
+  await new Promise(resolve => setTimeout(resolve, 1000));
   
-  // Check if all items are available (simulate)
-  for (const item of params.items) {
-    if (Math.random() &lt; 0.05) {
-      throw new Error(`Item ${item.productId} out of stock`);
+  // Check inventory availability
+  for (const item of items) {
+    if (item.quantity > 10) {
+      throw new Error(`Insufficient inventory for ${item.productId}`);
     }
   }
-  
-  const reservationId = `reservation_${Date.now()}`;
-  console.log(`Inventory reserved: ${reservationId}`);
-  
-  return {
-    reservationId,
-    status: 'reserved'
-  };
-}
-
-// Shipping arrangement activity
-export async function arrangeShipping(params: {
-  orderId: string;
-  customerId: string;
-  items: { productId: string; quantity: number }[];
-}): Promise&lt;{ shippingId: string; status: string }&gt; {
-  console.log(`Arranging shipping for order ${params.orderId}`);
-  
-  // Simulate shipping arrangement delay
-  await new Promise(resolve =&gt; setTimeout(resolve, 1000));
-  
-  // Simulate occasional shipping failures
-  if (Math.random() &lt; 0.08) {
-    throw new Error('Shipping arrangement failed');
-  }
-  
-  const shippingId = `shipping_${Date.now()}`;
-  console.log(`Shipping arranged: ${shippingId}`);
-  
-  return {
-    shippingId,
-    status: 'scheduled'
-  };
 }</pre>
                 </div>
 
-                <div class="info-box">
-                    <h4>💡 Activity Best Practices</h4>
+                <div class="info-box warning">
+                    <h4>⚠️ Activity Best Practices</h4>
                     <ul>
-                        <li><strong>Idempotent:</strong> Activities should produce the same result when retried</li>
-                        <li><strong>Stateless:</strong> Don't rely on local state between retries</li>
-                        <li><strong>Deterministic:</strong> Avoid random behavior in production activities</li>
-                        <li><strong>Timeout awareness:</strong> Handle long-running operations gracefully</li>
+                        <li>Activities should be idempotent (safe to retry)</li>
+                        <li>Use appropriate timeouts for external service calls</li>
+                        <li>Handle failures gracefully with proper error messages</li>
+                        <li>Log important state changes for debugging</li>
                     </ul>
                 </div>
 
                 <div class="step-navigation">
-                    <button class="nav-btn secondary" onclick="navigateToSection('workflows')">Previous</button>
-                    <button class="nav-btn" onclick="navigateToSection('frontend')">Next: Frontend</button>
+                    <button class="nav-btn secondary" onclick="navigateToSection('workflows')">Previous: Defining Workflows</button>
+                    <button class="nav-btn" onclick="navigateToSection('frontend')">Next: Building the Frontend</button>
                 </div>
             </div>
 
@@ -1189,115 +935,256 @@ export async function arrangeShipping(params: {
             <div class="content-section" id="frontend">
                 <div class="section-header">
                     <h2>Building the Frontend</h2>
-                    <p>Creating a Next.js interface with a one-click order button.</p>
+                    <p>Creating the Next.js user interface with the famous one-click order button.</p>
                 </div>
 
-                <h3>Order Page Component</h3>
-                <p>Let's create a simple order interface:</p>
-
+                <h3>One-Click Order Component</h3>
                 <div class="code-block">
-                    <div class="code-header">pages/index.tsx</div>
+                    <div class="code-header">src/app/page.tsx</div>
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre>import { useState } from 'react';
-import type { Order, OrderResult } from '../src/workflows/order-workflow';
+                    <pre>'use client';
 
-export default function OrderPage() {
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [orderResult, setOrderResult] = useState&lt;OrderResult | null&gt;(null);
+import { useState } from 'react';
 
-  const sampleOrder: Order = {
-    orderId: `order_${Date.now()}`,
-    customerId: 'customer_123',
-    items: [
-      { productId: 'product_1', quantity: 2, price: 29.99 },
-      { productId: 'product_2', quantity: 1, price: 49.99 }
-    ],
-    totalAmount: 109.97
-  };
+export default function HomePage() {
+  const [isOrdering, setIsOrdering] = useState(false);
+  const [orderResult, setOrderResult] = useState(null);
 
-  const handleOneClickOrder = async () =&gt; {
-    setIsProcessing(true);
-    setOrderResult(null);
-
+  const handleOneClickOrder = async () => {
+    setIsOrdering(true);
+    
     try {
       const response = await fetch('/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(sampleOrder)
+        body: JSON.stringify({
+          items: [{ productId: 'laptop-pro', quantity: 1, price: 1999 }],
+          customer: { email: 'customer@example.com' },
+          payment: { method: 'credit_card', amount: 1999 },
+          shipping: { address: '123 Main St, City, State' }
+        })
       });
-
+      
       const result = await response.json();
       setOrderResult(result);
     } catch (error) {
       console.error('Order failed:', error);
-      setOrderResult({
-        orderId: sampleOrder.orderId,
-        status: 'failed',
-        error: 'Network error'
-      });
     } finally {
-      setIsProcessing(false);
+      setIsOrdering(false);
     }
   };
 
   return (
-    <div style={{ padding: '40px', maxWidth: '800px', margin: '0 auto' }}>
-      <h1>One-Click Order System</h1>
+    &lt;div className="container mx-auto p-8"&gt;
+      &lt;h1 className="text-4xl font-bold mb-8"&gt;One-Click Order Demo&lt;/h1&gt;
       
-      <div style={{ 
-        background: '#f8f9fa', 
-        padding: '20px', 
-        borderRadius: '8px', 
-        marginBottom: '30px' 
-      }}>
-        <h3>Sample Order</h3>
-        <div>Order ID: {sampleOrder.orderId}</div>
-        <div>Customer: {sampleOrder.customerId}</div>
-        <div>Items:</div>
-        <ul>
-          {sampleOrder.items.map((item, index) => (
-            <li key={index}>
-              {item.productId} - Qty: {item.quantity} - ${item.price}
-            </li>
-          ))}
-        </ul>
-        <div><strong>Total: ${sampleOrder.totalAmount}</strong></div>
-      </div>
-
-      <button
-        onClick={handleOneClickOrder}
-        disabled={isProcessing}
-        style={{
-          background: isProcessing ? '#ccc' : '#007bff',
-          color: 'white',
-          border: 'none',
-          padding: '15px 30px',
-          fontSize: '18px',
-          borderRadius: '5px',
-          cursor: isProcessing ? 'not-allowed' : 'pointer',
-          marginBottom: '20px'
-        }}
-      >
-        {isProcessing ? 'Processing Order...' : 'Place Order (One Click)'}
-      </button>
-
-      {orderResult && (
-        <div style={{
-          background: orderResult.status === 'completed' ? '#d4edda' : '#f8d7da',
-          border: `1px solid ${orderResult.status === 'completed' ? '#c3e6cb' : '#f5c6cb'}`,
-          padding: '20px',
-          borderRadius: '5px',
-          color: orderResult.status === 'completed' ? '#155724' : '#721c24'
-        }}>
-          <h3>Order Result</h3>
-          <div>Order ID: {orderResult.orderId}</div>
-          <div>Status: {orderResult.status}</div>
-          {orderResult.paymentId && <div>Payment ID: {orderResult.paymentId}</div>}
-          {orderResult.reservationId && <div>Reservation ID: {orderResult.reservationId}</div>}
-          {orderResult.shippingId && <div>Shipping ID: {orderResult.shippingId}</div>}
-          {orderResult.error && <div>Error: {orderResult.error}</div>}
-        </div>
-      )}
-    </div>
+      &lt;div className="bg-white rounded-lg shadow-lg p-6"&gt;
+        &lt;h2 className="text-2xl font-semibold mb-4"&gt;MacBook Pro&lt;/h2&gt;
+        &lt;p className="text-3xl font-bold text-green-600 mb-6"&gt;$1,999&lt;/p&gt;
+        
+        &lt;button
+          onClick={handleOneClickOrder}
+          disabled={isOrdering}
+          className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold py-3 px-8 rounded-lg text-lg transition-colors"
+        &gt;
+          {isOrdering ? '⏳ Processing Order...' : '🚀 Order with One Click'}
+        &lt;/button&gt;
+        
+        {orderResult && (
+          &lt;div className="mt-6 p-4 bg-green-50 rounded-lg"&gt;
+            &lt;h3 className="font-semibold text-green-800"&gt;Order Successful! 🎉&lt;/h3&gt;
+            &lt;p&gt;Order ID: {orderResult.orderId}&lt;/p&gt;
+          &lt;/div&gt;
+        )}
+      &lt;/div&gt;
+    &lt;/div&gt;
   );
-}
+}</pre>
+                </div>
+
+                <div class="info-box success">
+                    <h4>✨ Frontend Features</h4>
+                    <ul>
+                        <li>Responsive design with Tailwind CSS</li>
+                        <li>Loading states and error handling</li>
+                        <li>Real-time order status updates</li>
+                        <li>Clean, modern user interface</li>
+                    </ul>
+                </div>
+
+                <div class="step-navigation">
+                    <button class="nav-btn secondary" onclick="navigateToSection('activities')">Previous: Implementing Activities</button>
+                    <button class="nav-btn" onclick="navigateToSection('testing')">Next: Testing & Debugging</button>
+                </div>
+            </div>
+
+            <!-- Testing Section -->
+            <div class="content-section" id="testing">
+                <div class="section-header">
+                    <h2>Testing & Debugging</h2>
+                    <p>Testing strategies and debugging techniques for Temporal applications.</p>
+                </div>
+
+                <h3>Running the Application</h3>
+                <div class="code-block">
+                    <div class="code-header">Start All Services</div>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre># Terminal 1: Start Temporal server
+temporal server start-dev
+
+# Terminal 2: Start the Temporal worker
+npm run worker
+
+# Terminal 3: Start Next.js development server
+npm run dev
+
+# Access the application at http://localhost:3000
+# Access Temporal UI at http://localhost:8233</pre>
+                </div>
+
+                <h3>Testing Workflows</h3>
+                <div class="code-block">
+                    <div class="code-header">Basic Workflow Test</div>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre>import { TestWorkflowEnvironment } from '@temporalio/testing';
+import { orderWorkflow } from '../workflows/order';
+
+describe('Order Workflow', () => {
+  let testEnv: TestWorkflowEnvironment;
+
+  beforeAll(async () => {
+    testEnv = await TestWorkflowEnvironment.createLocal();
+  });
+
+  it('should complete order successfully', async () => {
+    const result = await testEnv.client.workflow.execute(orderWorkflow, {
+      workflowId: 'test-order',
+      taskQueue: 'orders',
+      args: [{
+        id: 'order-123',
+        items: [{ productId: 'laptop', quantity: 1, price: 1999 }],
+        // ... other order data
+      }]
+    });
+
+    expect(result.status).toBe('completed');
+    expect(result.orderId).toBe('order-123');
+  });
+});</pre>
+                </div>
+
+                <div class="info-box">
+                    <h4>🐛 Debugging Tips</h4>
+                    <ul>
+                        <li>Use Temporal Web UI to monitor workflow execution</li>
+                        <li>Add console.log statements in activities for troubleshooting</li>
+                        <li>Check workflow history for failed steps</li>
+                        <li>Use VS Code debugger with breakpoints</li>
+                    </ul>
+                </div>
+
+                <div class="step-navigation">
+                    <button class="nav-btn secondary" onclick="navigateToSection('frontend')">Previous: Building Frontend</button>
+                    <button class="nav-btn" onclick="navigateToSection('advanced')">Next: Advanced Concepts</button>
+                </div>
+            </div>
+
+            <!-- Advanced Section -->
+            <div class="content-section" id="advanced">
+                <div class="section-header">
+                    <h2>Advanced Concepts & Production</h2>
+                    <p>Production deployment patterns, advanced Temporal features, and scaling considerations.</p>
+                </div>
+
+                <h3>Saga Pattern for Compensation</h3>
+                <div class="code-block">
+                    <div class="code-header">Compensation Workflow</div>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre>export async function orderWorkflowWithCompensation(orderData: OrderRequest): Promise&lt;OrderResult&gt; {
+  const compensations: Array&lt;() =&gt; Promise&lt;void&gt;&gt; = [];
+  
+  try {
+    // Step 1: Process payment
+    const paymentResult = await processPayment(orderData.payment);
+    compensations.push(() =&gt; refundPayment(paymentResult.transactionId));
+    
+    // Step 2: Update inventory
+    await updateInventory(orderData.items);
+    compensations.push(() =&gt; restoreInventory(orderData.items));
+    
+    // Step 3: Arrange shipping
+    const shipmentId = await arrangeShipping(orderData.shipping);
+    compensations.push(() =&gt; cancelShipping(shipmentId));
+    
+    return { orderId: orderData.id, status: 'completed' };
+  } catch (error) {
+    // Run compensations in reverse order
+    for (const compensation of compensations.reverse()) {
+      try {
+        await compensation();
+      } catch (compensationError) {
+        console.error('Compensation failed:', compensationError);
+      }
+    }
+    throw error;
+  }
+}</pre>
+                </div>
+
+                <h3>Production Deployment</h3>
+                <div class="info-box">
+                    <h4>🚀 Production Checklist</h4>
+                    <ul>
+                        <li>Set up Temporal Cloud or self-hosted cluster</li>
+                        <li>Configure proper authentication and TLS</li>
+                        <li>Set up monitoring and alerting</li>
+                        <li>Implement proper logging and observability</li>
+                        <li>Configure auto-scaling for workers</li>
+                        <li>Set up CI/CD pipelines</li>
+                        <li>Implement proper error handling and retries</li>
+                    </ul>
+                </div>
+
+                <div class="code-block">
+                    <div class="code-header">Production Worker Configuration</div>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre>import { Worker, NativeConnection } from '@temporalio/worker';
+
+async function createProductionWorker() {
+  const connection = await NativeConnection.connect({
+    address: process.env.TEMPORAL_ADDRESS!,
+    tls: {
+      clientCertPair: {
+        crt: await fs.readFile(process.env.TEMPORAL_CERT_PATH!),
+        key: await fs.readFile(process.env.TEMPORAL_KEY_PATH!),
+      },
+    },
+  });
+
+  const worker = await Worker.create({
+    connection,
+    namespace: process.env.TEMPORAL_NAMESPACE!,
+    taskQueue: 'production-orders',
+    workflowsPath: require.resolve('./workflows'),
+    activitiesPath: require.resolve('./activities'),
+    maxConcurrentActivityTaskExecutions: 100,
+  });
+
+  return worker;
+}</pre>
+                </div>
+
+                <div class="info-box success">
+                    <h4>🎉 Congratulations!</h4>
+                    <p>You've successfully built a complete one-click order application with Temporal.io! You now understand workflows, activities, error handling, testing, and production deployment patterns.</p>
+                </div>
+
+                <div class="step-navigation">
+                    <button class="nav-btn secondary" onclick="navigateToSection('testing')">Previous: Testing & Debugging</button>
+                    <button class="nav-btn success" onclick="completeWorkshop()">Complete Workshop 🎉</button>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
