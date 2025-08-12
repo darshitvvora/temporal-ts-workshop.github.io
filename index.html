@@ -546,7 +546,7 @@
             <div class="content-section active" id="overview">
                 <div class="section-header">
                     <h2>Workshop Overview</h2>
-                    <p>Welcome to the complete Temporal.io TypeScript workshop! You'll build a production-ready one-click order management system from scratch.</p>
+                    <p>Welcome to the complete Temporal.io TypeScript workshop! You'll build a demo one-click order management system from scratch.</p>
                 </div>
 
                 <div class="info-box " >
@@ -738,7 +738,7 @@ curl -sSf https://temporal.download/cli.sh | sh
 winget install --id Temporal.CLI
 
 # Verify installation
-temporal version</pre>
+temporal -v</pre>
                 </div>
 
                 <h3>Start Local Temporal Server</h3>
@@ -778,6 +778,11 @@ temporal server start-dev
                     <pre># Create Next.js project with TypeScript
 npx create-next-app@latest one-click-order --typescript --tailwind --eslint --app
 
+# Below are the defaults to be selected
+# ✔ Would you like your code inside a `src/` directory? … No
+# ✔ Would you like to use Turbopack for `next dev`? … Yes
+# ✔ Would you like to customize the import alias (`@/*` by default)? … No
+
 # Navigate to project directory
 cd one-click-order
 
@@ -793,18 +798,31 @@ npm install uuid @types/uuid zod</pre>
                     <div class="code-header">Folder Structure</div>
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                     <pre>one-click-order/
-├── src/
-│   ├── app/
-│   │   ├── api/
-│   │   │   └── orders/
-│   │   ├── page.tsx
-│   │   └── layout.tsx
-│   ├── temporal/
-│   │   ├── workflows/
-│   │   ├── activities/
-│   │   └── worker.ts
-│   └── types/
-└── package.json</pre>
+    app/
+    ├── api/
+    │   └── startBuy/
+    │       └── route.ts
+    ├── favicon.ico
+    ├── globals.css
+    ├── layout.tsx
+    └── page.tsx
+
+    temporal/
+    └── src/
+        ├── activities.ts
+        ├── client.ts
+        ├── shared.ts
+        ├── worker.ts
+        └── workflows.ts
+
+    tsconfig.json
+    .eslintrc.json
+    .gitignore
+    LICENSE
+    README.md
+    next.config.mjs
+    package-lock.json
+    package.json</pre>
                 </div>
 
                 <div class="step-navigation">
